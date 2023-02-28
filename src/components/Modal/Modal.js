@@ -14,6 +14,7 @@ const Modal = ({ largeImg, onClose }) => {
       }
     };
     window.addEventListener('keydown', handleKeyDown);
+    
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
@@ -35,9 +36,8 @@ const Modal = ({ largeImg, onClose }) => {
   );
 };
 
-export default Modal;
-
 Modal.propTypes = {
   onClose: PropTypes.func,
   largeImg: PropTypes.string,
 };
+export default Modal;

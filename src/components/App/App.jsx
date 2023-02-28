@@ -8,7 +8,7 @@ import { AppDiv, AppImg } from './App.styled';
 
 const App = () => {
   const [gallery, setGallery] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('cat');
+  const [searchQuery, setSearchQuery] = useState('');
   const [largeImg, setLargeImg] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
@@ -65,27 +65,5 @@ const App = () => {
       </>
     );
 
-  // componentDidUpdate(_, prevState) {
-  //   const { searchQuery, page } = this.state;
-  //   if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
-  //     GetImages.getImages(searchQuery, page).then(data => {
-  //       return this.setState(prevState => ({
-  //         gallery: [...prevState.gallery, ...data.hits],
-
-  //         showBtn: page < Math.ceil(data.totalHits / 12),
-  //       }));
-  //     });
-  //   }
-  // }
-
-  // handleClickLoadMoreBtn = () => {
-  //   this.setState(prevState => ({
-  //     page: prevState.page + 1,
-  //   }));
-  // };
-
-  // toggelModal = () => {
-  //   this.setState(({ showModal }) => ({ showModal: !showModal }));
-  // };
 };
 export default App;
