@@ -1,72 +1,91 @@
-import * as GetImages from '../../service/axios-api';
-
-import React, { Component } from 'react';
-// import { ToastContainer, toast } from 'react-toastify';
-// import { Toaster } from 'react-hot-toast';
-
+import * as FetchImages from 'service/axios-api';
+import { useState, useEffect } from 'react';
 import Button from 'components/Button/Button';
 import Modal from 'components/Modal/Modal';
 import Searchbar from 'components/Searchbar/Searchbar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import { AppDiv, AppImg } from './App.styled';
 
-export class App extends Component {
-  state = {
-    gallery: [],
-    searchQuery: '',
-    modalUrl: null,
-    showModal: false,
-    page: 1,
-  };
+const App = () => {
+  const [gallery, setGallery] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('cat');
+  const [largeImg, setLargeImg] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalHits, setTotalHits] = useState(0);
 
-  componentDidUpdate(_, prevState) {
-    const { searchQuery, page } = this.state;
-    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
-      GetImages.getImages(searchQuery, page).then(data => {
-        return this.setState(prevState => ({
-          gallery: [...prevState.gallery, ...data.hits],
-
-          showBtn: page < Math.ceil(data.totalHits / 12),
-        }));
-      });
+  useEffect(() => {
+    if (!searchQuery) {
+      return;
     }
-  }
-  getSearchQuery = name => {
-    this.setState({
-      searchQuery: name,
-      gallery: [],
-      modalUrl: null,
-      showModal: false,
-      page: 1,
-    });
+    const fetchImages = async () => {
+      try {
+        const data = await FetchImages.getImages(searchQuery, page);
+        setTotalHits(data.totalHits);
+        setGallery(prev => [...prev, ...data.hits]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchImages();
+  }, [searchQuery, page]);
+  console.log(gallery);
+
+  const getSearchQuery = query => {
+    if (query === '') {
+      alert ('Please enter text')
+      return;
+    }
+    setSearchQuery(query);
+    setPage(1);
+    setGallery([]);
+   
+  };
+  const toggelModal = () => {
+    setShowModal(prev => !prev);
   };
 
-  handleClickLoadMoreBtn = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+   const handleClickLoadMoreBtn = () => {
+      setPage(prev => prev + 1);
   };
-
-  toggelModal = () => {
-    this.setState(({ showModal }) => ({ showModal: !showModal }));
-  };
-
-  render() {
-    const { gallery, showModal, modalUrl } = this.state;
+  const isShowBtn = gallery.length < totalHits;
     return (
       <>
-        <Searchbar onSubmit={this.getSearchQuery} />
+        <Searchbar onSubmit={getSearchQuery} />
         {gallery && <ImageGallery gallery={gallery} />}
         {showModal && (
-          <Modal onClose={this.toggelModal}>
+          <Modal onClose={toggelModal}>
             <AppDiv>
-              <AppImg src={modalUrl} alt="" />
+              <AppImg src={largeImg} alt="" />
             </AppDiv>
           </Modal>
         )}
 
-        {this.state.showBtn && <Button onClick={this.handleClickLoadMoreBtn} />}
+        {isShowBtn && <Button onClick={handleClickLoadMoreBtn} />}
       </>
     );
-  }
-}
+
+  // componentDidUpdate(_, prevState) {
+  //   const { searchQuery, page } = this.state;
+  //   if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
+  //     GetImages.getImages(searchQuery, page).then(data => {
+  //       return this.setState(prevState => ({
+  //         gallery: [...prevState.gallery, ...data.hits],
+
+  //         showBtn: page < Math.ceil(data.totalHits / 12),
+  //       }));
+  //     });
+  //   }
+  // }
+
+  // handleClickLoadMoreBtn = () => {
+  //   this.setState(prevState => ({
+  //     page: prevState.page + 1,
+  //   }));
+  // };
+
+  // toggelModal = () => {
+  //   this.setState(({ showModal }) => ({ showModal: !showModal }));
+  // };
+};
+export default App;

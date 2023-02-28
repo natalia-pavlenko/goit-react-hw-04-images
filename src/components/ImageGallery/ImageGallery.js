@@ -5,13 +5,15 @@ import { GalleryList } from './ImageGallery.styled';
 const ImageGallery = ({ gallery }) => {
   return (
     <GalleryList>
-      {gallery.map(img => (
-        <ImageGalleryItem
-          webformatURL={img.webformatURL}
-          id={img.id}
-          largeImageURL={img.largeImageURL}
-        />
-      ))}
+      {gallery &&
+        gallery.map(img => (
+          <ImageGalleryItem
+            key={img.id}
+            webformatURL={img.webformatURL}
+            id={img.id}
+            largeImageURL={img.largeImageURL}
+          />
+        ))}
     </GalleryList>
   );
 };

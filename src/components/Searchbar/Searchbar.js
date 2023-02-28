@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -9,51 +9,41 @@ import {
   SearchFormInput,
 } from './Searchbar.styled';
 
-export class Searchbar extends Component {
-  state = {
-    value: '',
-  };
+const Searchbar = ({ onSubmit }) => {
+  const [value, setValue] = useState('');
 
-  handelSubmit = event => {
+  const handelSubmit = event => {
     event.preventDefault();
-    const { value } = this.state;
-    const { onSubmit } = this.props;
-
-    onSubmit(value);
-    this.setState({ value: '' });
+    const form = event.currentTarget;
+    onSubmit(form.search.value);
   };
 
-  handleChange = event => {
+  const handleChange = event => {
     const { value } = event.target;
-    this.setState({ value });
+    setValue(value);
   };
+  return (
+    <SearchbarHeader>
+      <SearchForm onSubmit={handelSubmit}>
+        <SearchFormBtn type="submit">
+          <SearchFormBtnLabel>Search</SearchFormBtnLabel>
+        </SearchFormBtn>
 
-  render() {
-    const { value } = this.state;
+        <SearchFormInput
+          type="text"
+          name="search"
+          value={value}
+          onChange={handleChange}
+          autocomplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+        />
+      </SearchForm>
+    </SearchbarHeader>
+  );
 
-    return (
-      <SearchbarHeader>
-        <SearchForm onSubmit={this.handelSubmit}>
-          <SearchFormBtn type="submit">
-            <SearchFormBtnLabel>Search</SearchFormBtnLabel>
-          </SearchFormBtn>
-
-          <SearchFormInput
-            type="text"
-            name="search"
-            value={value}
-            onChange={this.handleChange}
-            autocomplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </SearchForm>
-      </SearchbarHeader>
-    );
-  }
-}
-export default Searchbar;
-
-Searchbar.propTypes = {
-  value: PropTypes.string,
+  Searchbar.propTypes = {
+    value: PropTypes.string,
+  };
 };
+export default Searchbar;
